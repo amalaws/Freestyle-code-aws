@@ -1,26 +1,22 @@
-# Use an official Python image as the base
+# Use an official Python runtime as the base image
 FROM python:3.9
 
-# Set the working directory in the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update -y && apt-get install -y \
-    mysql-client \
-    && rm -rf /var/lib/apt/lists/*
-
 # Copy application files into the container
-COPY . .
+COPY . /app
 
-# Install required Python packages
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir \
-       flask \
-       pymysql \
-       boto3 
+# Update system packages (for both Amazon Linux and Ubuntu)
+RUN apt-get update && \
+    apt-get install -y mysql-client && \
+    apt-get clean
 
-# Expose the application port (Change if needed)
+# Install required Python libraries
+RUN pip install --no-cache-dir PyMySQL boto3 flask
+
+# Expose port 5000 for Flask app
 EXPOSE 5000
 
-# Command to run the application
+# Run the application
 CMD ["python3", "EmpApp.py"]
