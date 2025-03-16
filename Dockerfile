@@ -1,21 +1,19 @@
-# Use an official Python runtime as the base image
+# Use an official Python image
 FROM python:3.9
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy application files into the container
-COPY . /app
+# Copy dependency file first
+COPY requirements.txt .
 
-# Update system packages (for both Amazon Linux and Ubuntu)
-RUN apt-get update && \
-    apt-get install -y mysql-client && \
-    apt-get clean
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install required Python libraries
-RUN pip install --no-cache-dir PyMySQL boto3 flask
+# Copy the rest of the app
+COPY . .
 
-# Expose port 5000 for Flask app
+# Expose port
 EXPOSE 5000
 
 # Run the application
